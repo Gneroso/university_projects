@@ -1,73 +1,50 @@
 #include <stdio.h>
 #include <math.h>
 
-int (*copy(int n, int original[2*n-1][2*n-1]))[5] {
-  int i, j;
+struct point{
+  int x, y;
+} stack[100];
 
-  for(i=0; i<2*n-1; i++){
-    for (j=0; j<2*n-1; j++){
-      simple_copy[i][j] = original[i][j];
-      printf("%d %d", i,j);
-    }
-  }
-
-  printf("!!!!!!!!!!!!!!!\n");
-
-  return simple_copy;
-}
-
-int check_point(int x, int y, int n, int fold[2*n-1][2*n-1]) {
+int check_point(int x, int y, int n, int stack_size) {
   if (x > 2*n-1 || y > 2*n-1 || x < 0 || y < 0) return 0;
-  if (fold[x][y] == 1) return 0;
+  if (stack_size >= n) return 0;
 
   return 1;
 }
 
-int is_solution(int x, int y, int n) {
-  int px, py;
-  px=px=n;
-
-  return (sqrt((x-px)*(x-px) + (y-py)*(y-py)) == n)?1:0;
-}
-
-int generate_fold(int n, int fold[2*n-1][2*n-1], int x, int y) {
+int generate_fold(int n, int x, int y, int stack_size) {
   int i,j;
 
-  if (check_point(x, y, n, fold))
-    fold[x][y] = 1;
-  else
+  if (check_point(x, y, n, stack_size)){
+    stack[stack_size].x = x;
+    stack[stack_size].y = y;
+    stack_size++;
+  }else
     return -1;
-  for(i=0; i<2*n-1; i++){
-      for (j=0; j<2*n-1; j++){
-        printf("%d ", fold[i][j]);
-      }
-      printf("\n");
+
+  if (stack_size == n){
+    stack_size--;
+
+    printf("\n");
+    for(i=0; i<n; i++){
+      printf("%d %d\n", stack[i].x, stack[i].y);
     }
 
-  printf("\n\n\n");
+    stack[n].x = 0;
+    stack[n].y = 0;
 
-  if (is_solution(x, y, n)){
-    for(i=1; i<=n; i++){
-      for (j=1; j<=n; j++){
-        printf("%d", fold[i][j]);
-      }
-      printf("\n");
-    }
   }
   else {
-    generate_fold(n, copy(n, fold), x+1, y);
-    return -1;
-    generate_fold(n, copy(n, fold), x, y+1);
-    generate_fold(n, copy(n, fold), x-1, y);
-    generate_fold(n, copy(n, fold), x, y-1);
+    generate_fold(n, x+1, y, stack_size);
+    generate_fold(n, x, y+1, stack_size);
+    generate_fold(n, x-1, y, stack_size);
+    generate_fold(n, x, y-1, stack_size);
   }
 }
-
-int fold1[5][5];
 
 int main() {
   int n = 3;
-  generate_fold(n, fold1, n-1, n-1);
+  generate_fold(n, n-1, n-1, 0);
 
   return 0;
 }
