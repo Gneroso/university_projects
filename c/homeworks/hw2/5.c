@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define MAXIM 5000000
 
@@ -25,32 +26,38 @@ char * strrev(char number[]){
   return number;
 }
 
-int *to_base(int base, char repr[], int number) {
-  int remainder, length;
-
-  static char new_number[] = "";
+int to_base(int base, char repr[], int number) {
+  int remainder, length=0, old;
+  old=number;
+  static char new_number[250000000];
   new_number[0] = '\0';
 
   while(number) {
     remainder = number % base;
     number /= base;
 
-    length = strlen(new_number);
-    new_number[length] = repr[remainder];
-    new_number[length+1] = '\0';
+    new_number[length++] = repr[remainder];
+    new_number[length] = '\0';
   }
 
-  return atoi(strrev(new_number));
-
+  return atol(strrev(new_number));
 }
 
-int check_palindrom(int number) {
-  
-  return 1;
+int check_palindrom(long number) {
+  int new_number=0, old_number=number;
+
+  while(number) {
+    new_number *= 10;
+    new_number += number%10;
+
+    number /= 10;
+  }
+
+  return old_number==new_number?1:0;
 }
 
 int generate_palindroms() {
-  int number, sum=0;
+  long number, sum=0;
 
   for(number=11; number<=MAXIM; number++){
     if (check_palindrom(number) && check_palindrom(to_base(2, "01", number))) {
@@ -62,6 +69,6 @@ int generate_palindroms() {
 }
 
 int main() {
-  generate_palindroms();
+  printf("Sum: %d", generate_palindroms());
   return 0;
 }
