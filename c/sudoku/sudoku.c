@@ -6,64 +6,81 @@
 int sudoku[9][9];
 int stack[1000];
 
-void print_sudoku(){
-  int i,j;
+void print_solution(int sudoku[9][9]) {
+  int index_line, index_column;
 
-  for(i=0; i<9; i++) {
-    for(j=0; j<9; j++) {
-      printf("%d", sudoku[i][j]);
+  for(index_line=0; index_line<9; index_line++) {
+    for(index_column=0; index_column<9; index_column++) {
+      printf("%d ", sudoku[index_line][index_column]);
     }
     printf("\n");
   }
 
+  printf("\n");
 }
 
-int check_number(int i, int line, int column, int sudoku[9][9]) {
-  int j, k;
+int check_number(int number, int line, int column, int sudoku[9][9]) {
+  int index, index_column, start_line=(line/3)*3, start_column=(column/3)*3;
 
-  for(j=0; j<9; j++) if(sudoku[line][j] == i) return 0;
-  for(j=0; j<9; j++) if(sudoku[j][column] == i) return 0;
-  /*
-  printf("%d %d %d\n", line, column, i);
-  for(j=((line+1)/3)*3-1; j< ((line+1)/3)*3-1+3; j++) {
-    for(k=((column+1)/3)*3-1; k< ((column+1)/3)*3-1+3; k++) {
-      if(sudoku[j][k] == i) return 0;
+  // check if the number exists in this line
+  for(index=0; index<9; index++) if(sudoku[line][index] == number) return 0;
+
+  // check if the number exists in this column
+  for(index=0; index<9; index++) if(sudoku[index][column] == number) return 0;
+
+  // check if the number exists in this square (3*3)
+  for(index=start_line; index < start_line+3; index++) {
+    for(index_column=start_column; index_column<start_column+3; index_column++) {
+      if(sudoku[index][index_column] == number) return 0;
     }
   }
-*/
+
   return 1;
 }
 
 int solve_sudoku(int line, int column, int sudoku[9][9]) {
-  int i,j, copy_sudoku[9][9], good=0;
+  int index_line, index_column, copy_sudoku[9][9], good=0, number;
 
-  for(i=0; i<9; i++) {
-    for(j=0; j<9; j++) {
-      copy_sudoku[i][j] = sudoku[i][j];
-      printf("%d ", sudoku[i][j]);
+  // create a sudoku matrix copy
+  for(index_line=0; index_line<9; index_line++) {
+    for(index_column=0; index_column<9; index_column++) {
+      copy_sudoku[index_line][index_column] = sudoku[index_line][index_column];
     }
-    printf("\n");
   }
 
-  while(copy_sudoku[line][column] && line > 9) {
-    if (column >= 8) {
+  // go to the first 0 element
+  while(copy_sudoku[line][column] != 0 && line < 9) {
+    if (column == 8) {
       column = 0; line++;
     } else {
       column++;
     }
   }
-  if (line >= 8) return 1;
 
-  for(i=1; i<=9; i++) {
-    if (check_number(i, line, column, copy_sudoku)) {
+  // if we are at the last line + 1 => we found a solution
+  if (line >= 9) {
+    print_solution(copy_sudoku);
+    return 1;
+  }
+
+  // we are at 0-element in matrix, so we try to change that element with the
+  // right non-0 element
+  for(number=1; number<=9; number++) {
+    // if the number meet thoese 3 condition, go to next position
+    if (check_number(number, line, column, copy_sudoku)) {
       good = 1;
-      copy_sudoku[line][column] = i;
-      solve_sudoku(line, column+1, copy_sudoku);
+      copy_sudoku[line][column] = number;
+      // continue solving for next position
+      if (column == 8) {
+        solve_sudoku(line+1, 0, copy_sudoku);
+      } else {
+        solve_sudoku(line, column+1, copy_sudoku);
+      }
     }
+    // if no solution was found, go back and try with another number
   }
 
   if (!good) return 0;
-
 }
 
 void build_sudoku(char line[LINE_SIZE], int line_number) {
