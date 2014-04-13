@@ -34,10 +34,16 @@ class Convert(object):
     self.log.info("Start transforming %s from base %s to base %s" %
                   (self.number, self._from, self.to))
 
+    self.number = self.number.split('.')
+    decimal = self.number[0]
+    floating = self.number[1] if len(self.number) > 1 else ''
+
     if self._from != 10:
       self.log.warn(yellow("Initial base is not decimal!"))
       now = time.time()
-      self.number = self.to_decimal(self.number, self._from)
+      self.number = str(self.to_decimal(decimal, self._from))
+      if floating:
+        self.number += ".%s" % self.to_decimal(floating, self._from)
       self.log.debug(blue("Transforming the number from base %s into decimal"
                           " took %f seconds" % (self._from,
                                                 round(time.time() - now, 10))))
@@ -45,7 +51,10 @@ class Convert(object):
 
     if self.to != 10:
       now = time.time()
-      self.number = self.to_base(self.number, self.to)
+      self.number = str(self.to_base(decimal, self.to))
+      if floating:
+        self.number += ".%s" % self._get_floating(floating, self.to)
+
       self.log.debug(blue("Transforming the number from decimal into base %s"
                           " took %f seconds" % (self.to,
                                                 round(time.time() - now, 10))))
@@ -66,6 +75,25 @@ class Convert(object):
     self.log.debug(blue("Transforming the number from decimal into base %s"
                         " took %f seconds" % (self.to,
                                               round(time.time() - now, 10))))
+    return new_number
+
+  def _get_floating(self, number, to):
+    number = float('0.%s' % number)
+    new_number = ''
+    digits = self.digits(to)
+    trend = ''
+
+    while number > 0.0:
+      digit = digits[int(number * to)]
+      if len(trend) > 100:
+        if trend and trend in new_number:
+          break
+        trend = digit
+      else:
+        trend += digit
+      new_number += digit
+      number = (number * to) - int(number * to)
+
     return new_number
 
   def to_decimal(self, number, _from):
