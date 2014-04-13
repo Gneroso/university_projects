@@ -1,4 +1,3 @@
-#!/usr/bin/env pypy
 import cli.log
 
 from conversion import Convert
