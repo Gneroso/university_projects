@@ -1,10 +1,7 @@
 import hashlib
 import urllib
-from urlparse import urlparse
 
 import bencode
-
-from trackers.udp import UDPTracker
 
 
 class Torrent(object):
@@ -23,13 +20,8 @@ class Torrent(object):
     return urllib.quote(info_hash)
 
   @property
-  def peers(self):
+  def urls(self):
     urls = [self.decoded['announce']]
     urls += [announce[0] for announce in self.decoded['announce-list']]
 
-    for url in urls:
-      parsed = urlparse(url)
-      if parsed.scheme == 'udp':
-        _, url, port = url.split(":")
-        tracker = UDPTracker(url[2:], int(port), self)
-        print tracker.peers
+    return urls
