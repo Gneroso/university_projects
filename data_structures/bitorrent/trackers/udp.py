@@ -15,7 +15,7 @@ BUFFER_SIZE = 2048
 
 class UDPTracker(Tracker):
   def __init__(self, *args, **kwargs):
-    super(self, UDPTracker).__init__(*args, **kwargs)
+    super(UDPTracker, self).__init__(*args, **kwargs)
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     self.socket.settimeout(3)
 
@@ -27,7 +27,12 @@ class UDPTracker(Tracker):
     if connection_id is None:
       raise ValueError("Invalid connection_id")
 
-    return self.announce
+    return self.announce(connection_id)
+
+  def announce(self, connection_id):
+    action = ACTIONS['announce']
+    transaction_id = self.transaction
+    return connection_id
 
   @property
   def connection(self):
@@ -41,10 +46,10 @@ class UDPTracker(Tracker):
     self.socket.sendto(message, (self.url, self.port))
     try:
       data, addr = self.socket.recvfrom(BUFFER_SIZE)
-    except socket.timout:
+    except socket.timeout:
       return None
 
-    return struct.unpack(">LLQ", data)[0]
+    return struct.unpack(">iiq", data)[2]
 
   @property
   def transaction(self):
