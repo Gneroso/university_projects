@@ -14,6 +14,9 @@ class Torrent(object):
     with open(path) as f:
       return f.read()
 
+  def __getitem__(self, item):
+    return self.decoded[item]
+
   @property
   def hash(self):
     info_hash = hashlib.sha1(bencode.bencode(self.decoded['info'])).digest()
