@@ -1,13 +1,14 @@
-from abs import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod
 
 
 class Tracker(object):
   __metaclass__ = ABCMeta
 
-  def __init__(self, url, port):
+  def __init__(self, url, port, torrent):
     self.url = url
     self.port = port
+    self.torrent = torrent
 
   @abstractmethod
-  def get_peers(self):
+  def peers(self):
     raise NotImplemented("This method needs to be implemented")
