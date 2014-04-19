@@ -25,14 +25,49 @@ class UDPTracker(Tracker):
   def peers(self):
     connection_id = self.connection
     if connection_id is None:
-      raise ValueError("Invalid connection_id")
+      return []
 
     return self.announce(connection_id)
 
   def announce(self, connection_id):
+    peers = []
+    offset = 20
+
+    # building UPD request
     action = ACTIONS['announce']
     transaction_id = self.transaction
-    return connection_id
+    left = self.torrent['info']['length']
+    downloaded = 0x0
+    uploaded = 0x0
+    ip = 0x0
+    key = 0x0
+    event = 0x0
+    num_wat = -1
+    port = 80
+
+    args = (connection_id, action,
+            transaction_id, self.info_hash, self.peer_id,
+            downloaded, left, uploaded, event, ip, key,
+            num_wat, port)
+    message = struct.pack("!qii20s20sqqqiIIiH", *args)
+
+    # send request
+    self.socket.sendto(message, (self.url, self.port))
+
+    try:
+      data, addr = self.socket.recvfrom(BUFFER_SIZE)
+      action = struct.unpack("!iiiii", data[:offset])
+    except socket.timeout:
+      return []
+
+    # parsing ip and port
+    while offset < len(data):
+      ip, port = struct.unpack_from("!ih", data[offset:])
+      ip = socket.inet_ntoa(hex(ip)[2:].zfill(8).decode('hex'))
+      peers.append((ip, port))
+      offset += 6
+
+    return peers
 
   @property
   def connection(self):
