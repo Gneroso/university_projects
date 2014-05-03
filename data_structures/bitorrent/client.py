@@ -4,13 +4,15 @@ from urlparse import urlparse
 
 from torrent import Torrent
 from trackers.udp import UDPTracker
+from trackers.tcp import TCPTracker
 
 
 class Client(object):
   __TORRENTS = {}
 
   def __init__(self):
-    self.peer_id = urllib.quote("-AZ2470-" + "".join([str(randint(0, 9)) for i in xrange(12)]))
+    self.peer_id = urllib.quote("-AZ2470-" + "".join([str(randint(0, 9))
+                                                     for i in xrange(12)]))
 
   @property
   def torrents(self):
@@ -30,11 +32,15 @@ class Client(object):
         tracker = UDPTracker(url[2:], int(port), torrent, self.peer_id)
 
         peers.update({ip: port for ip, port in tracker.peers})
+      elif parsed.scheme == 'http':
+        tracker = TCPTracker(url, 80, torrent, self.peer_id)
+        # peers.update({ip: port for ip, port in tracker.peers})
+        print tracker.peers
 
     return peers
 
   def download(self, torrent):
-    if not torrent in self.__TORRENTS:
+    if torrent not in self.__TORRENTS:
       raise ValueError('%s not here' % torrent)
 
     torrent = self.__TORRENTS[torrent]

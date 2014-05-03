@@ -2,5 +2,7 @@ from .base import Tracker
 
 
 class TCPTracker(Tracker):
-  def get_peers(self):
-    print 'getting peers'
+
+  @property
+  def peers(self):
+    return "asdasd"
