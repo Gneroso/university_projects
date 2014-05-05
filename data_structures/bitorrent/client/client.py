@@ -28,7 +28,9 @@ class Client(object):
     for url in torrent.urls:
       parsed = urlparse(url)
       if parsed.scheme == 'udp':
-        _, url, port = url.split(":")
+        url = "%s%s" % (parsed.netloc.split(':')[0], parsed.path)
+        print url
+        port = parsed.port
         tracker = UDPTracker(url[2:], int(port), torrent, self.peer_id)
 
         peers.update({ip: port for ip, port in tracker.peers})
