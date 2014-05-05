@@ -16,9 +16,10 @@ class TCPTracker(Tracker):
         'left': self.torrent['info']['length'],
         'compact': 1,
         'event': 'started',
+        'no_peer_id': True
     }
     try:
       response = requests.get(self.url, params=payload)
-      print response, self.url
+      print response.content, self.url
     except:
       print 'fail'
