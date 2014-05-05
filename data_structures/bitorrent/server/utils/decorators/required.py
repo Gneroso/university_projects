@@ -25,7 +25,7 @@ class required(object):
         if param not in arguments:
           errors.append('%s is required' % param)
         else:
-          kwargs[param] = self.requires[param]
+          kwargs[param] = arguments[param]
 
       if errors:
         raise HttpBadRequest("\n".join(errors))

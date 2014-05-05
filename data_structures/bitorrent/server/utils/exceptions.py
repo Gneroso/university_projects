@@ -27,11 +27,11 @@ class BaseHttpException(HTTPException):
                 u'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n'
                 u'<title>%(code)s %(name)s</title>\n'
                 u'<h1>%(name)s</h1>\n'
-                u'%(description)s\n'
+                u'%(description:)s\n'
             ) % {
                 'code': code,
                 'name': name,
-                'descrition': description
+                'description:': description
             }
       }
   }
@@ -50,7 +50,7 @@ class BaseHttpException(HTTPException):
     """Get the body"""
     return self._template[self.request_type]['body'](self.code,
                                                      escape(self.name),
-                                                      self.get_description(environ))
+                                                     self.get_description(environ))
 
   def get_headers(self, environ=None):
     """Get a list of headers."""
