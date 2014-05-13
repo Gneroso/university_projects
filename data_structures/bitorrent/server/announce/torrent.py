@@ -32,8 +32,19 @@ class Torrent(object):
 
   @property
   def seeders(self):
-    return self.info['seeders'] if 'seeders' in self.info else []
+    return self.info['seeders'] if 'seeders' in self.info else 0
 
   @property
   def leechers(self):
-    return self.info['leecher'] if 'leechers' in self.info else []
+    return self.info['leecher'] if 'leechers' in self.info else 0
+
+  @property
+  def binary_peers(self):
+    binary_peers = ''
+    for peer in self.peers:
+      ip = peer.split(':')[0]
+      port = peer.split(':')[1]
+
+      ip = struct.unpack("!I", socket.inet_aton(ip))[0]
+      binary_peers += struct.pack('!ih', ip, int(port))
+    return binary_peers
