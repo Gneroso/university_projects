@@ -1,5 +1,4 @@
 import hashlib
-import urllib
 
 import bencode
 
@@ -19,8 +18,8 @@ class Torrent(object):
 
   @property
   def hash(self):
-    info_hash = hashlib.sha1(bencode.bencode(self.decoded['info'])).digest()
-    return urllib.quote(info_hash)
+    info_hash = hashlib.sha1(bencode.bencode(self.decoded['info'])).hexdigest()
+    return info_hash
 
   @property
   def urls(self):

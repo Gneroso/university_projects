@@ -1,4 +1,5 @@
 import requests
+import json
 
 from .base import Tracker
 
@@ -19,9 +20,13 @@ class TCPTracker(Tracker):
         'no_peer_id': True
     }
     try:
-      response = requests.get(self.url, params=payload, headers={
-                                  'Content-Type': 'application/json'
-                              })
-      print response.content, self.url
-    except:
-      print 'fail'
+      headers = {'Content-Type': 'application/json'}
+      response = requests.get(self.url, params=payload, headers=headers)
+      response = json.loads(response.content)
+
+      if response['status'] == 'success':
+        return [tuple(peer.split(':')) for peer in response['message']['peers']]
+      else:
+        raise ValueError(response['message'])
+    except Exception as e:
+      raise ValueError(e.msg)

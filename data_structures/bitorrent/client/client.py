@@ -1,4 +1,5 @@
 import urllib
+import traceback
 from random import randint
 from urlparse import urlparse
 
@@ -23,7 +24,7 @@ class Client(object):
     self.__TORRENTS[new_torrent] = Torrent(new_torrent)
 
   def _get_peers(self, torrent):
-    peers = {}
+    peers = []
 
     for url in torrent.urls:
       parsed = urlparse(url)
@@ -31,19 +32,21 @@ class Client(object):
         url = "%s%s" % (parsed.netloc.split(':')[0], parsed.path)
         port = parsed.port
         tracker = UDPTracker(url, int(port), torrent, self.peer_id)
-
-        peers.update({ip: port for ip, port in tracker.peers})
       elif parsed.scheme == 'http':
         tracker = TCPTracker(url, 80, torrent, self.peer_id)
-        # peers.update({ip: port for ip, port in tracker.peers})
-        print tracker.peers
 
-    return peers
+      peers += tracker.peers
+
+    return set(peers)
 
   def download(self, torrent):
     if torrent not in self.__TORRENTS:
       raise ValueError('%s not here' % torrent)
 
     torrent = self.__TORRENTS[torrent]
-    peers = self._get_peers(torrent)
-    print peers
+    try:
+      peers = self._get_peers(torrent)
+      print peers
+    except ValueError as e:
+      print traceback.format_exc()
+      print e

@@ -49,7 +49,7 @@ class UDPTracker(Tracker):
             transaction_id, self.info_hash, self.peer_id,
             downloaded, left, uploaded, event, ip, key,
             num_wat, port)
-    message = struct.pack("!qii20s20sqqqiIIiH", *args)
+    message = struct.pack("!qii40s20sqqqiIIiH", *args)
 
     # send request
     self.socket.sendto(message, (self.url, self.port))
@@ -64,7 +64,7 @@ class UDPTracker(Tracker):
     while offset < len(data):
       ip, port = struct.unpack_from("!ih", data[offset:])
       ip = socket.inet_ntoa(hex(ip)[2:].zfill(8).decode('hex'))
-      peers.append((ip, port))
+      peers.append((ip, str(port)))
       offset += 6
 
     return peers
