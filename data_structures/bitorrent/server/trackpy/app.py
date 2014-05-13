@@ -19,10 +19,6 @@ def create_app(config=None):
   app.config.from_object(config)
 
   app = register_endpoints(app)
-  app.config['DEBUG'] = True
-  app.config['TESTING'] = True
-  app.config['PROPAGATE_EXCEPTIONS'] = True
-  app.debug = True
 
   @app.errorhandler(404)
   def page_not_found(e):

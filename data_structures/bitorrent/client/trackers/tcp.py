@@ -10,7 +10,7 @@ class TCPTracker(Tracker):
     payload = {
         'info_hash': self.torrent.hash,
         'peer_id': self.peer_id,
-        'port': 6889,
+        'port': 6888,
         'uploaded': 0,
         'downloaded': 0,
         'left': self.torrent['info']['length'],
@@ -19,7 +19,9 @@ class TCPTracker(Tracker):
         'no_peer_id': True
     }
     try:
-      response = requests.get(self.url, params=payload)
+      response = requests.get(self.url, params=payload, headers={
+                                  'Content-Type': 'application/json'
+                              })
       print response.content, self.url
     except:
       print 'fail'
