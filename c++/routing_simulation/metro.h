@@ -1,10 +1,16 @@
+#ifndef METRO_H
+#define METRO_H
+
+#include <vector>
 #include "segment.h"
 
 class Metro {
-  Segment *segments;
-  int size;
-
+  char* name;
+  std::vector <Segment> segments;
   public:
-    int number;
-    Metro();
-}
+    Metro(const char* ptr);
+    void addSegment(Segment* segment);
+    void printSegments();
+};
+
+#endif

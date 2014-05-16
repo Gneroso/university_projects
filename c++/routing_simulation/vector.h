@@ -1,9 +1,10 @@
 template <class T>
 class vector {
-    T *v;
+    T* *v;
     int size;
   public:
-    void add(T x);
+    void add(T* x);
+    void print();
 };
 
 #include "vector.tpp"
