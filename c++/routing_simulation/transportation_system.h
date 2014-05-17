@@ -12,6 +12,7 @@ class TransportationSystem {
     TransportationSystem(): strategy(NULL) {};
     void setRoutingStrategy(const char *type);
     void addMetro(Metro *metro);
+    void dumpAdiancyMatrix();
 };
 
 #endif

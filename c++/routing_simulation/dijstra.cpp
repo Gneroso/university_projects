@@ -2,5 +2,5 @@
 #include "dijstra.h"
 
 void Dijstra::findRoute(){
-  std::cout<<"Find dijstra route";
+  std::cout<<"Yey";
 };

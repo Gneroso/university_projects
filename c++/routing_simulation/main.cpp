@@ -11,7 +11,7 @@ int main() {
   Station traian = Station("traian");
   Station buzias = Station("buzias");
 
-  Segment traian_buzias = Segment(&traian, &buzias, 10);
+  Segment traian_buzias = Segment(&traian, &buzias, 15);
   Segment maria_cluj = Segment(&maria, &cluj, 10);
 
   Metro tram8 = Metro("8");
@@ -21,6 +21,7 @@ int main() {
   ratt.addMetro(&tram8);
 
   ratt.setRoutingStrategy("DIJSTRA");
+  ratt.dumpAdiancyMatrix();
 
   return 0;
 }

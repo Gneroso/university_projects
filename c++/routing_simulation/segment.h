@@ -12,6 +12,9 @@ class Segment {
     Segment(): start(NULL), end(NULL), length(0) {};
     Segment(Station *start, Station *end, int length);
     void print();
+    Station getStartStation();
+    Station getEndStation();
+    int getLength();
 };
 
 #endif

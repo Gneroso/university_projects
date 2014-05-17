@@ -9,6 +9,16 @@ Station::Station (const char* ptr){
   strcpy(name, ptr);
 };
 
+char* Station::getName(){
+  return name;
+}
+
 void Station::printName(){
   std::cout<<name;
 };
+
+bool Station::operator<(const Station& rhs) const {
+  int cmp = strcmp(this->name, rhs.name);
+  if (cmp < 0) return true;
+  return false;
+}
