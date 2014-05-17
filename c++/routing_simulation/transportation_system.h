@@ -4,7 +4,7 @@
 #include <vector>
 #include "strategy.h"
 #include "metro.h"
-#include "metro.h"
+#include "station.h"
 #include "types.h"
 
 class TransportationSystem {
@@ -14,6 +14,7 @@ class TransportationSystem {
     TransportationSystem(): strategy(NULL) {};
     void setRoutingStrategy(const char *type);
     void addMetro(Metro *metro);
+    void findRoute(Station start, Station end);
     graph dumpGraph();
 };
 

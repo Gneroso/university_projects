@@ -9,6 +9,8 @@ class Station {
     char* getName() const;
     void printName();
     bool operator<(const Station &rhs) const;
+    bool operator==(const Station &rhs) const;
+    bool operator!=(const Station &rhs) const;
 };
 
 #endif

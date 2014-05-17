@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "segment.h"
+#include "station.h"
 #include "types.h"
 
 class Strategy {
@@ -10,7 +11,7 @@ class Strategy {
     graph g;
   public:
     Strategy(graph g);
-    virtual void findRoute();
+    virtual void findRoute(Station start, Station end);
 };
 
 #endif

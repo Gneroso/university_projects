@@ -21,6 +21,14 @@ void Station::printName(){
   std::cout<<name;
 };
 
+bool Station::operator!=(const Station& rhs) const {
+  return strcmp(this->name, rhs.name) != 0;
+}
+
+bool Station::operator==(const Station& rhs) const {
+  return strcmp(this->name, rhs.name) == 0;
+}
+
 bool Station::operator<(const Station& rhs) const {
   int cmp = strcmp(this->name, rhs.name);
   if (cmp < 0) return true;

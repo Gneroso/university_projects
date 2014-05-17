@@ -18,8 +18,10 @@ void TransportationSystem::setRoutingStrategy(const char *type){
   if(!strcmp(type, "DIJSTRA")) {
     strategy = new Dijstra(this->dumpGraph());
   }
+}
 
-  strategy->findRoute();
+void TransportationSystem::findRoute(Station start, Station end) {
+  strategy->findRoute(start, end);
 }
 
 graph TransportationSystem::dumpGraph(){
