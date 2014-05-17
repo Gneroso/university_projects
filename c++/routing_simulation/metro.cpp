@@ -4,7 +4,7 @@
 #include "metro.h"
 
 
-Metro::Metro(const char* ptr) {
+Metro::Metro(const char *ptr) {
   name = new char[strlen(ptr)];
   strcpy(name, ptr);
 }
@@ -14,6 +14,10 @@ void Metro::printSegments() {
     segments[i].print();
 }
 
-void Metro::addSegment(Segment* segment) {
+void Metro::addSegment(Segment *segment) {
   segments.push_back(*segment);
+}
+
+std::vector<Segment> Metro::getSegments() {
+  return segments;
 }

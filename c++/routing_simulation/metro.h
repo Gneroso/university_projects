@@ -6,11 +6,13 @@
 
 class Metro {
   char* name;
-  std::vector <Segment> segments;
+  std::vector<Segment> segments;
   public:
     Metro(const char* ptr);
     void addSegment(Segment* segment);
     void printSegments();
+
+    std::vector<Segment> getSegments();
 };
 
 #endif
