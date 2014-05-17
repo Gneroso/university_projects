@@ -1,10 +1,11 @@
 #include <iostream>
 
 #include "strategy.h"
+#include "types.h"
 
 
-Strategy::Strategy(std::vector<Segment> *aSsegments) {
-  segments = aSsegments;
+Strategy::Strategy(graph gi) {
+  g = gi;
 };
 
 void Strategy::findRoute(){

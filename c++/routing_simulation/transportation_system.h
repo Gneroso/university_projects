@@ -4,6 +4,8 @@
 #include <vector>
 #include "strategy.h"
 #include "metro.h"
+#include "metro.h"
+#include "types.h"
 
 class TransportationSystem {
     std::vector<Metro> metros;
@@ -12,7 +14,7 @@ class TransportationSystem {
     TransportationSystem(): strategy(NULL) {};
     void setRoutingStrategy(const char *type);
     void addMetro(Metro *metro);
-    void dumpAdiancyMatrix();
+    graph dumpGraph();
 };
 
 #endif

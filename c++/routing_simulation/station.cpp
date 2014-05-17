@@ -9,6 +9,10 @@ Station::Station (const char* ptr){
   strcpy(name, ptr);
 };
 
+char* Station::getName() const{
+  return name;
+}
+
 char* Station::getName(){
   return name;
 }

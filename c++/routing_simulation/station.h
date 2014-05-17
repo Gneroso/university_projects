@@ -6,6 +6,7 @@ class Station {
   public:
     Station(const char* ptr);
     char* getName();
+    char* getName() const;
     void printName();
     bool operator<(const Station &rhs) const;
 };

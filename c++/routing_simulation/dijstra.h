@@ -2,12 +2,12 @@
 #define DIJSTRA_H
 
 #include "strategy.h"
-#include <iostream>
+#include "types.h"
 
 class Dijstra : public Strategy {
   int something;
   public:
-    Dijstra(std::vector<Segment> *segments): Strategy(segments), something(1) {};
+    Dijstra(graph g): Strategy(g), something(1) {};
     void findRoute();
 };
 

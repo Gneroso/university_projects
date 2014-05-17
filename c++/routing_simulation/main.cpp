@@ -21,7 +21,7 @@ int main() {
   ratt.addMetro(&tram8);
 
   ratt.setRoutingStrategy("DIJSTRA");
-  ratt.dumpAdiancyMatrix();
+  //ratt.dumpAdiancyMatrix();
 
   return 0;
 }

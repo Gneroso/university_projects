@@ -3,11 +3,13 @@
 
 #include <vector>
 #include "segment.h"
+#include "types.h"
 
 class Strategy {
-    std::vector<Segment> *segments;
+  protected:
+    graph g;
   public:
-    Strategy(std::vector<Segment> *segments);
+    Strategy(graph g);
     virtual void findRoute();
 };
 

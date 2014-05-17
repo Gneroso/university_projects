@@ -6,8 +6,7 @@
 #include "dijstra.h"
 #include "metro.h"
 #include "segment.h"
-
-typedef std::map<Station, int> distance;
+#include "types.h"
 
 void TransportationSystem::addMetro(Metro *metro) {
   metros.push_back(*metro);
@@ -17,15 +16,14 @@ void TransportationSystem::setRoutingStrategy(const char *type){
   std::vector<Segment> segments = metros[0].getSegments();
 
   if(!strcmp(type, "DIJSTRA")) {
-    strategy = new Dijstra(&segments);
+    strategy = new Dijstra(this->dumpGraph());
   }
 
   strategy->findRoute();
 }
 
-void TransportationSystem::dumpAdiancyMatrix(){
-  std::map<Station, distance> graph;
-  distance a;
+graph TransportationSystem::dumpGraph(){
+  graph g;
 
   for(unsigned int i=0; i<metros.size(); i++) {
     std::vector<Segment> segments = metros[i].getSegments();
@@ -33,8 +31,9 @@ void TransportationSystem::dumpAdiancyMatrix(){
       Station start = segments[segment].getStartStation();
       Station end = segments[segment].getEndStation();
 
-      graph[start][end] = segments[segment].getLength();
-      std::cout<<graph[start][end]<<" "<<start.getName()<<"\n";
+      g[start][end] = segments[segment].getLength();
     }
   }
+
+  return g;
 }
