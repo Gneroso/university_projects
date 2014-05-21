@@ -7,6 +7,8 @@ from torrent import Torrent
 from trackers.udp import UDPTracker
 from trackers.tcp import TCPTracker
 
+from peers import TcpPeer
+
 
 class Client(object):
   __TORRENTS = {}
@@ -45,8 +47,12 @@ class Client(object):
 
     torrent = self.__TORRENTS[torrent]
     try:
-      peers = self._get_peers(torrent)
-      print peers
+      # peers = self._get_peers(torrent)
+      #  print peer
+      peers = [(u'127.0.0.1', u'6888')]
+      for peer in peers:
+        tcp_peer = TcpPeer(peer[0], peer[1], self.peer_id, torrent)
+        tcp_peer.handshake()
     except ValueError as e:
       print traceback.format_exc()
       print e
