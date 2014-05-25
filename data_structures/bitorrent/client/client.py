@@ -3,7 +3,7 @@ import traceback
 from random import randint
 
 from trackers import Tracker
-from torrnt import Torrent
+from torrent import Torrent
 from peer import Peer
 
 from strategies import RarityStrategy
@@ -15,15 +15,15 @@ class Client(object):
     self.peer_id = urllib.quote("-AZ2470-" + "".join([str(randint(0, 9))
                                                      for i in xrange(12)]))
     self.torrent = Torrent(torrent)
-    self.strategy = RarityStrategy
+    self._strategy = RarityStrategy
 
   @property
   def strategy(self):
-    return self.strategy
+    return self._strategy
 
   @strategy.setter
-  def strategy(self, strategy):
-    self.strategy = strategy
+  def strategy(self, different_strategy):
+    self._strategy = different_strategy
 
   @property
   def peers(self):
@@ -40,11 +40,11 @@ class Client(object):
       pieces = {}
       for raw_peer in self.peers:
         peer = Peer(raw_peer[0], raw_peer[1], self.peer_id, self.torrent)
-        pieces[peer] = {
+        pieces[raw_peer] = {
             'bitfield': peer.bitfield,
             'peer': peer
         }
-      self.strategy(pieces, self.torrent).build()
+      self._strategy(pieces, self.torrent).build()
     except ValueError as e:
       print traceback.format_exc()
       print e

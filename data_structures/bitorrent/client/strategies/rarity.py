@@ -6,8 +6,9 @@ class RarityStrategy(Strategy):
   def check_rarity(self, length):
     rarity = [{'rarity': 0, 'index': i, 'peers': []} for i in range(length)]
     for peer in self.pieces:
-      for item in rarity:
-        item['rarity'] += int(self.pieces[peer]['bitfield'])
+      for index, item in enumerate(rarity):
+        print self.pieces[peer]
+        item['rarity'] += int(self.pieces[peer]['bitfield'][index])
         item['peers'].append(self.pieces[peer]['peer'])
     return rarity
 

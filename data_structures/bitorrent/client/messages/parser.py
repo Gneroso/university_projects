@@ -8,7 +8,7 @@ class Parser(object):
     length, id = struct.unpack("!bb", message[:2])
     for msg_type in MESSAGES:
       if id == MESSAGES[msg_type]:
-        return msg_type, getattr(self, "on_" % msg_type)(message)
+        return msg_type, getattr(self, "on_%s" % msg_type)(message)
     return None
 
   def on_choke(self, message):
@@ -27,7 +27,8 @@ class Parser(object):
     return struct.unpack("!bbi", message)
 
   def on_bitfield(self, message):
-    return struct.unpack("!bbi", message)
+    length, id, bitfield = struct.unpack("!bbi", message)
+    return bin(bitfield)[2:]
 
   def on_request(self, message):
     return struct.unpack("!bbiii", message)

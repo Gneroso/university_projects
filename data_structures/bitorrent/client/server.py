@@ -5,6 +5,7 @@ from gevent.server import StreamServer
 from unipath import Path
 
 from torrent import Torrent
+from messages import parser, builder
 
 
 def get_bitfield(torrent):
@@ -45,7 +46,7 @@ def handshake(data, socket):
   import time
   time.sleep(1)
   # send bitfield with pieces
-  message = struct.pack("!hbi", 6, 5, get_bitfield(torrent))
+  message = builder('bitfield', get_bitfield(torrent))
 
   socket.send(message)
 

@@ -1,6 +1,8 @@
 import struct
 import socket
 
+from messages import parser, builder
+
 
 class Peer(object):
   def __init__(self, host, port, peer_id, torrent):
@@ -11,21 +13,27 @@ class Peer(object):
     self.peer_id = peer_id
 
     self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-  def handshake(self):
     self.socket.connect((self.host, self.port))
 
+  @property
+  def handshake(self):
     message = struct.pack("!i19sh40s20s", 19, 'BitTorrent protocol', 0x00,
                           self.torrent.hash, self.peer_id)
     self.socket.send(message)
 
     response = self.socket.recv(2048)
     if response != message:
-      socket.close()
+      self.socket.close()
+      return False
+    return True
+
+  @property
+  def bitfield(self):
+    if not self.handshake:
+      return
 
     bitfield = self.socket.recv(2048)
-    length, id, bitfield = struct.unpack("!hbi", bitfield)
-    return bin(bitfield)[2:]
+    return parser(bitfield)[1]
 
   def request(self, piece, start, end):
     message = struct.pack("!hb", 1, 2)
@@ -58,6 +66,3 @@ class Peer(object):
 
     length, id = struct.unpack("!hb", message)
     return id == 1
-
-  def __hash__(self):
-    return (self.host, self.ip)
