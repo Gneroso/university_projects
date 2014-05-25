@@ -5,8 +5,9 @@ from bencode import bencode
 
 
 FILE_NAME = 'examples/file.txt'
+print FILE_NAME
 CHUNKS = 10
-SIZE = os.stat(FILE_NAME).st_size
+SIZE = os.path.getsize(FILE_NAME)
 HASHES = []
 
 
@@ -25,7 +26,7 @@ torrent = {
     }
 }
 
-with open('examples/uploads/testing.torrent', 'w') as f:
+with open('examples/torrents/testing.torrent', 'w') as f:
   f.write(bencode(torrent))
 
 with open('examples/progress/testing.progress', 'w') as f:

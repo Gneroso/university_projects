@@ -30,7 +30,7 @@ class Builder(object):
     return struct.pack("!bbiii", 13, 6, *args)
 
   def on_piece(self, piece_index, start, content):
-    message = struct.pack("!bbii", 9 + len(content), 7, piece_index, start)
+    message = struct.pack("!bbii", 9, 7, piece_index, start)
     return message + content
 
   def on_cancel(self, *args):

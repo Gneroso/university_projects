@@ -31,10 +31,10 @@ class Parser(object):
     return bin(bitfield)[2:]
 
   def on_request(self, message):
-    return struct.unpack("!bbiii", message)
+    return struct.unpack("!iii", message[2:])
 
   def on_piece(self, message):
-    length, id, piece_index, start = struct.unpack("!hbhh", message[:7])
+    length, id, piece_index, start = struct.unpack("!bbii", message[:10])
     return length, id, piece_index, start, message[7:]
 
   def on_cancel(self, message):

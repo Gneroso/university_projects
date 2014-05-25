@@ -1,6 +1,7 @@
 import hashlib
 
 import bencode
+from unipath import Path
 
 
 class Torrent(object):
@@ -8,6 +9,8 @@ class Torrent(object):
   def __init__(self, path):
     self.encoded = self._get_meta(path)
     self.decoded = bencode.bdecode(self.encoded)
+
+    self.path = Path(path)
 
   def _get_meta(self, path):
     with open(path) as f:

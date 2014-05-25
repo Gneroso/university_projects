@@ -35,30 +35,29 @@ class Peer(object):
     bitfield = self.socket.recv(2048)
     return parser(bitfield)[1]
 
-  def request(self, piece, start, end):
-    message = struct.pack("!hb", 1, 2)
-    self.socket.send(message)
+  def request(self, piece, start, length):
+    self.socket.send(builder('interested'))
 
     while True:
-      message = self.socket.recv(2048)
+      message = parser(self.socket.recv(400000))
+      if not message:
+        continue
 
-      if self.is_unchocked(message):
-        message = struct.pack("!hbhhh", 13, 6, piece, start, end - start)
-        self.socket.send(message)
+      if message[0] == 'unchoke':
+        self.socket.send(builder('request', piece, start, length))
 
-      if self.is_block(message):
-        self.write_block(message)
+      if message[0] == 'piece':
+        self.write_block(message[1])
         return
 
-  def is_block(self, message):
-    length, id = struct.unpack("!hb", message[:3])
-    return id == 7
-
   def write_block(self, message):
-    length, id, piece_index, start = struct.unpack("!hbhh", message[:7])
-    with open("examples/downloads/testing.part", "w") as f:
-      f.seek(start)
-      f.write(message[7:])
+    length, id, index, start, content = message
+    BLOCK_SIZE = 2 ** 14
+    blocks_per_piece = (self.torrent['info']['length'] / 10) / BLOCK_SIZE
+    with open("examples/downloads/testing4.part", "w") as f:
+      offset = index * blocks_per_piece * BLOCK_SIZE
+      f.seek(start * BLOCK_SIZE + offset)
+      f.write(content)
 
   def is_unchocked(self, message):
     if not len(message) == 3:

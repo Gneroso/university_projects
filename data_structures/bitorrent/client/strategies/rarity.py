@@ -7,7 +7,6 @@ class RarityStrategy(Strategy):
     rarity = [{'rarity': 0, 'index': i, 'peers': []} for i in range(length)]
     for peer in self.pieces:
       for index, item in enumerate(rarity):
-        print self.pieces[peer]
         item['rarity'] += int(self.pieces[peer]['bitfield'][index])
         item['peers'].append(self.pieces[peer]['peer'])
     return rarity
@@ -20,10 +19,16 @@ class RarityStrategy(Strategy):
 
   def start_requesting(self, rarity):
     # piece / 16K
-    piece_blocks = self.torrent['info']['length'] / (2 ** 14)
+    BLOCK_SIZE = 2 ** 14
+    piece_blocks = (self.torrent['info']['length'] / 10) / BLOCK_SIZE
     for piece in rarity:
-      blocks_per_peer = len(piece['peers'])
+      blocks_per_peer = piece_blocks / len(piece['peers'])
+      offset = piece['index'] * (self.torrent['info']['length'] / 10)
       for index, peer in enumerate(piece['peers']):
-        start = index * blocks_per_peer * piece_blocks
-        end = (index + 1) * blocks_per_peer * piece_blocks
-        peer.request(piece['index'], start, end)
+        start = offset + index * blocks_per_peer * BLOCK_SIZE
+        end = offset + (index + 1) * blocks_per_peer * BLOCK_SIZE
+        block_index = 0
+        while start < end:
+          peer.request(piece['index'], block_index, BLOCK_SIZE)
+          start += BLOCK_SIZE
+          block_index += 1
