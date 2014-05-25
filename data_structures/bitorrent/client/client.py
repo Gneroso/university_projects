@@ -1,58 +1,50 @@
 import urllib
 import traceback
 from random import randint
-from urlparse import urlparse
 
-from torrent import Torrent
-from trackers.udp import UDPTracker
-from trackers.tcp import TCPTracker
+from trackers import Tracker
+from torrnt import Torrent
+from peer import Peer
 
-from peers import TcpPeer
+from strategies import RarityStrategy
 
 
 class Client(object):
-  __TORRENTS = {}
 
-  def __init__(self):
+  def __init__(self, torrent):
     self.peer_id = urllib.quote("-AZ2470-" + "".join([str(randint(0, 9))
                                                      for i in xrange(12)]))
+    self.torrent = Torrent(torrent)
+    self.strategy = RarityStrategy
 
   @property
-  def torrents(self):
-    return self.__TORRENTS
+  def strategy(self):
+    return self.strategy
 
-  @torrents.setter
-  def torrents(self, new_torrent):
-    self.__TORRENTS[new_torrent] = Torrent(new_torrent)
+  @strategy.setter
+  def strategy(self, strategy):
+    self.strategy = strategy
 
-  def _get_peers(self, torrent):
+  @property
+  def peers(self):
     peers = []
 
-    for url in torrent.urls:
-      parsed = urlparse(url)
-      if parsed.scheme == 'udp':
-        url = "%s%s" % (parsed.netloc.split(':')[0], parsed.path)
-        port = parsed.port
-        tracker = UDPTracker(url, int(port), torrent, self.peer_id)
-      elif parsed.scheme == 'http':
-        tracker = TCPTracker(url, 80, torrent, self.peer_id)
-
-      peers += tracker.peers
+    for url in self.torrent.urls:
+      peers += Tracker(url, self.torrent, self.peer_id).peers
 
     return set(peers)
 
-  def download(self, torrent):
-    if torrent not in self.__TORRENTS:
-      raise ValueError('%s not here' % torrent)
-
-    torrent = self.__TORRENTS[torrent]
+  def download(self):
     try:
-      # peers = self._get_peers(torrent)
-      #  print peer
-      peers = [(u'127.0.0.1', u'6888')]
-      for peer in peers:
-        tcp_peer = TcpPeer(peer[0], peer[1], self.peer_id, torrent)
-        tcp_peer.handshake()
+      # TODO: create a thread pool and wait until everybody is ready
+      pieces = {}
+      for raw_peer in self.peers:
+        peer = Peer(raw_peer[0], raw_peer[1], self.peer_id, self.torrent)
+        pieces[peer] = {
+            'bitfield': peer.bitfield,
+            'peer': peer
+        }
+      self.strategy(pieces, self.torrent).build()
     except ValueError as e:
       print traceback.format_exc()
       print e

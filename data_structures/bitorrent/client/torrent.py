@@ -25,7 +25,6 @@ class Torrent(object):
   def urls(self):
     urls = [self.decoded['announce']]
     if 'announce-list' in self.decoded:
-      urls += [announce[0] for announce in self.decoded['announce-list']]
-    print urls
+      urls += [announce for announce in self.decoded['announce-list']]
 
     return urls
