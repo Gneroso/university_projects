@@ -28,32 +28,36 @@ class Convert(object):
     else:
       number = self.transform_positive()
 
-    print green("Your number is %s" % red(number))
+    print green("Your number is %s" % (red(number)))
 
   def transform_positive(self):
     self.log.info("Start transforming %s from base %s to base %s" %
                   (self.number, self._from, self.to))
 
     self.number = self.number.split('.')
+
     decimal = self.number[0]
     floating = self.number[1] if len(self.number) > 1 else ''
 
     if self._from != 10:
-      self.log.warn(yellow("Initial base is not decimal!"))
       now = time.time()
       self.number = str(self.to_decimal(decimal, self._from))
       if floating:
-        self.number += ".%s" % self.to_decimal(floating, self._from)
+        self.number += ".%s" % str(self.to_decimal(floating, self._from, True))[2:]
       self.log.debug(blue("Transforming the number from base %s into decimal"
                           " took %f seconds" % (self._from,
                                                 round(time.time() - now, 10))))
       self.log.info("Decimal representation of the number is %s" % self.number)
+      self.number = self.number.split('.')
+
+      decimal = self.number[0]
+      floating = self.number[1] if len(self.number) > 1 else ''
 
     if self.to != 10:
       now = time.time()
       self.number = str(self.to_base(decimal, self.to))
       if floating:
-        self.number += ".%s" % self._get_floating(floating, self.to)
+        self.number += ".%s" % str(self._get_floating(floating, self.to))
 
       self.log.debug(blue("Transforming the number from decimal into base %s"
                           " took %f seconds" % (self.to,
@@ -92,22 +96,30 @@ class Convert(object):
       else:
         trend += digit
       new_number += digit
-      number = (number * to) - int(number * to)
+      number = float(number * to) - int(number * to)
 
     return new_number
 
-  def to_decimal(self, number, _from):
-    number = number[::-1]
+  def to_decimal(self, number, _from, floating=False):
+    if not floating:
+      number = number[::-1]
     new_number = 0
     digits = self.digits(_from)
 
     for index in xrange(len(number)):
       value = digits.index(number[index])
-      digit = int(value) * (_from ** index)
+      if not floating:
+        digit = int(value) * (_from ** index)
 
-      self.log.debug(blue("%s * (%s ** %s) = %s + %s = %s" %
-                          (value, _from, index, digit, new_number,
-                           new_number + digit)))
+        self.log.debug(blue("%s * (%s ** %s) = %s + %s = %s" %
+                            (value, _from, index, digit, new_number,
+                             new_number + digit)))
+      else:
+        digit = float(value) / (_from ** (index + 1))
+
+        self.log.debug(blue("%s / (%s ** %s) = %s + %s = %s" %
+                            (value, _from, index, digit, new_number,
+                             new_number + digit)))
 
       new_number += digit
 
