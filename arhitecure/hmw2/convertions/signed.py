@@ -13,7 +13,6 @@ def to_signed_binary(integer, sign):
     number = number[:8]
     return number[::-1]
 
-  while len(number) <= 7:
+  while len(number) < 7:
     number += '0'
-
   return sign + number[::-1]
