@@ -1,3 +1,4 @@
-from convertions import signed
+from convertions import signed, one_complement
 
-print signed(11)
+print signed(-5)
+print one_complement(128)
