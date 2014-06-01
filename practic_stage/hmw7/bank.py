@@ -22,10 +22,9 @@ class Bank(object):
       for transaction in content.split("\n"):
         self.load_transaction(transaction)
 
-  def add(self, client, money):
-    self.client[client] = {
-        'money': money
-    }
+  def show_balance(self, client):
+    with open("clients/%s" % sha1(client).hexdigest()) as f:
+      return f.read() or 0
 
   def transfer_from(self, client, to, how_much, times=0):
     if times >= 3:
@@ -33,9 +32,9 @@ class Bank(object):
 
     with open("db/clients.txt") as f:
       clients = f.read()
-      if client not in clients:
+      if "%s:" % client not in clients:
         raise ValueError("%s is not a client" % client)
-      if to not in clients:
+      if "%s:" % to not in clients:
         raise ValueError("%s is not a client" % to)
 
     client = sha1(client).hexdigest()

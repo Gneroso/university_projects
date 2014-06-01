@@ -68,16 +68,28 @@ class Office(object):
       print yellow("1. Transfer some money\n"
                    " 2. Pay\n"
                    " 3. Retrieve\n"
-                   " 4. Logout\n")
+                   " 4. Show balance\n"
+                   " 5. Logout\n")
 
       option = int(raw_input(blue("I want to: ")))
-      if option == 1:
+      if option == 1 or option == 2:
         to = raw_input(red("to: "))
         money = raw_input(red("sum: "))
         try:
           print self.bank.transfer_from(self.user, to, money)
         except ValueError as ve:
           print red(ve)
+      elif option == 3:
+        money = raw_input(red("sum: "))
+        try:
+          if self.bank.transfer_from(self.user, self.name, money):
+            print green("Operation finished with success!\n")
+          else:
+            print red("Something went wrong...try again later\n")
+        except ValueError as ve:
+          print red(ve)
       elif option == 4:
+        print self.bank.show_balance(self.user)
+      elif option == 5:
         self.user = None
         return

@@ -17,7 +17,7 @@ def transfer(message, socket):
   transactions.append(to)
 
   with open("logs/now", 'a') as f:
-    f.write("-%s:%s:%s:%s" % (_from, to, how_many, date))
+    f.write("-%s:%s:%s:%s\n" % (_from, to, how_many, date))
 
   with open("clients/%s" % _from, 'r+') as f:
     money = int(f.read() or '0')
