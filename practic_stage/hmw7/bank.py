@@ -1,7 +1,8 @@
+from hashlib import sha1
 import socket
 import time
 
-from messages import builder
+from messages import builder, parser
 
 
 class Bank(object):
@@ -26,6 +27,25 @@ class Bank(object):
         'money': money
     }
 
-  def pay(self, client, to, how_much):
-    message = builder('transfer', client, to, how_much, int(time.time()))
+  def transfer_from(self, client, to, how_much, times=0):
+    if times >= 3:
+      return False
+
+    with open("db/clients.txt") as f:
+      clients = f.read()
+      if client not in clients:
+        raise ValueError("%s is not a client" % client)
+      if to not in clients:
+        raise ValueError("%s is not a client" % to)
+
+    client = sha1(client).hexdigest()
+    to = sha1(to).hexdigest()
+    message = builder('transfer', client, to, int(how_much), int(time.time()))
     self.socket.send(message)
+
+    response = parser(self.socket.recv(2048))
+    if response is not None and response[0] == 'retry':
+      time.sleep(1)
+      self.transfer_from(client, to, how_much, times + 1)
+    elif response is not None and response[0] == 'success':
+      return True

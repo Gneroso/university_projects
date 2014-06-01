@@ -30,7 +30,7 @@ class Office(object):
   def login(self):
     print "\n\n"
     username = raw_input(green("username: "))
-    password = getpass(green("password"))
+    password = getpass(green("password: "))
     with open("db/clients.txt", "r") as f:
       clients = f.read()
       credentials = "%s:%s" % (username, sha1(password).hexdigest())
@@ -48,10 +48,15 @@ class Office(object):
 
     with open("db/clients.txt", "ab+") as f:
       clients = f.read()
-      if username in clients:
+      if "%s:" % username in clients:
         print red("Username already taken")
         return
-      f.write("%s:%s" % (username, sha1(password).hexdigest()))
+
+      f.write("%s:%s\n" % (username, sha1(password).hexdigest()))
+      initial_deposit = raw_input(green("Initial deposit: "))
+      with open("clients/%s" % sha1(username).hexdigest(), "w") as g:
+        g.write(initial_deposit)
+
     print green("Succesfully register!")
     self.user = username
     self.start()
@@ -62,7 +67,17 @@ class Office(object):
       print green("How can I help you, %s?" % self.user)
       print yellow("1. Transfer some money\n"
                    " 2. Pay\n"
-                   " 3. Retrieve\n")
+                   " 3. Retrieve\n"
+                   " 4. Logout\n")
 
-      option = int(raw_input(yellow("I want to: ")))
-      print option
+      option = int(raw_input(blue("I want to: ")))
+      if option == 1:
+        to = raw_input(red("to: "))
+        money = raw_input(red("sum: "))
+        try:
+          print self.bank.transfer_from(self.user, to, money)
+        except ValueError as ve:
+          print red(ve)
+      elif option == 4:
+        self.user = None
+        return
