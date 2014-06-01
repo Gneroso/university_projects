@@ -1,17 +1,19 @@
+from utils import to_binary
+
+
 def signed(integer):
   sign = '1' if integer < 0 else '0'
-  integer = integer * -1 if integer < 0 else integer
+  return to_signed_binary(integer, sign)
 
-  number = ''
-  while integer:
-    number += str(integer % 2)
-    integer /= 2
+
+def to_signed_binary(integer, sign):
+  number = to_binary(integer)
 
   if len(number) >= 8:
     number = number[:8]
     return number[::-1]
 
-  while len(number) < 7:
+  while len(number) <= 7:
     number += '0'
 
   return sign + number[::-1]
