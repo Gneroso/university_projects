@@ -41,8 +41,40 @@ class Queue(object):
 
     while initial_size:
       thing = self.pop()
-      if item == thing:
+      if item == thing[0]:
         found = True
-      self.push(thing)
+      self.push(thing[0])
+
+      initial_size -= 1
 
     return found
+
+  def find(self, item):
+    initial_size = self.size
+
+    while initial_size:
+      thing = self.pop()
+      if item == thing[0]:
+        return thing
+      self.push(thing)
+
+      initial_size -= 1
+
+    return False
+
+  def __iter__(self):
+    initial_size = self.size
+
+    while initial_size:
+      thing = self.pop()
+      yield(thing)
+      self.push(thing)
+      initial_size -= 1
+
+    raise StopIteration()
+
+  def __repr__(self):
+    rep = ""
+    for item in self._queue:
+      rep += "%s," % item
+    return rep

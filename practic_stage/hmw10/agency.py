@@ -12,6 +12,9 @@ class Agency(object):
     self.booked_phone = Queue()
     self.booked_cash = Queue()
     self.tickets = Queue()
+    self.sold = Queue()
+
+    self.load()
 
   def open(self):
     os.system("clear")
@@ -30,29 +33,68 @@ class Agency(object):
 
       if option == "1":
         self.buy_ticket()
+
       if option == "2":
         self.book_ticket_by_phone()
+
       if option == "3":
         self.book_ticket()
+
       if option == "4":
         self.cancel_booking()
+
       if option == "5":
         self.money()
 
       if option == "6":
         break
 
-  def buy_ticket(self):
+  def ticket(self, in_queue):
     option = raw_input("Do you want a specific number?[Y/n]: ")
     if option in ['Y', 'y', 'YE', 'ye', 'YES', 'yes']:
       number = raw_input("Please insert a number: ")
       if number not in self.booked_phone and number not in self.booked_cash:
-        print "Your number is %s" % self.tickets.pop()
+        number = self.tickets.find(number)
+        in_queue.push(number)
+        print "Your number is %s" % number[0]
       else:
         print "Number already taken"
         return self.buy_ticket()
     else:
-      print "Your ticket is %s" % self.tickets.pop()
+      number = self.tickets.pop()
+      self.booked_phone.push(number)
+      print "Your ticket is %s" % number[0]
+
+  def buy_ticket(self):
+    self.ticket(self.sold)
+
+  def book_ticket_by_phone(self):
+    self.ticket(self.booked_phone)
+
+  def book_ticket(self):
+    self.ticket(self.booked_cash)
+
+  def money(self):
+    # get total from sold
+    total = 0
+    for ticket in self.sold:
+      total += ticket[1]
+
+    # get total from booked_with_cash
+    for ticket in self.booked_cash:
+      total += ticket[1]
+
+    return total
+
+  def cancel_booking(self):
+    number = raw_input("Please enter the number: ")
+    if number in self.booked_phone:
+      self.booked_phone.find(number)
+
+    if number in self.booked_cash:
+      self.booked_cash.find(number)
+
+    print "Thank you"
 
   def load(self):
     with open("logs/now") as f:
