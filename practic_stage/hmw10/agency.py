@@ -2,12 +2,16 @@ import json
 import os
 
 from utils import yellow, red, blue, green
+from queue import Queue
 
 
 class Agency(object):
   def __init__(self, name):
     self.name = name
-    self.queue = Queue()
+
+    self.booked_phone = Queue()
+    self.booked_cash = Queue()
+    self.tickets = Queue()
 
   def open(self):
     os.system("clear")
@@ -29,7 +33,7 @@ class Agency(object):
       if option == "3":
         self.book_ticket()
       if option == "4":
-        self.cancle_booking()
+        self.cancel_booking()
       if option == "5":
         self.money()
       if option == "6":
@@ -39,5 +43,6 @@ class Agency(object):
     with open("logs/now") as f:
       content = json.load(f.read())
 
-  def buy_ticket(self):
-
+      self.booked_phone.load(content['phone'])
+      self.booked_cash.load(content['cash'])
+      self.tickets.load(content['tickets'])
