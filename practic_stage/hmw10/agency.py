@@ -25,7 +25,9 @@ class Agency(object):
                    " 4. Cancel booking\n"
                    " 5. See how many money do you have\n"
                    " 6. Goodbye!\n")
+
       option = raw_input(green("I want to: "))
+
       if option == "1":
         self.buy_ticket()
       if option == "2":
@@ -36,8 +38,21 @@ class Agency(object):
         self.cancel_booking()
       if option == "5":
         self.money()
+
       if option == "6":
         break
+
+  def buy_ticket(self):
+    option = raw_input("Do you want a specific number?[Y/n]: ")
+    if option in ['Y', 'y', 'YE', 'ye', 'YES', 'yes']:
+      number = raw_input("Please insert a number: ")
+      if number not in self.booked_phone and number not in self.booked_cash:
+        print "Your number is %s" % self.tickets.pop()
+      else:
+        print "Number already taken"
+        return self.buy_ticket()
+    else:
+      print "Your ticket is %s" % self.tickets.pop()
 
   def load(self):
     with open("logs/now") as f:
