@@ -1,3 +1,4 @@
+import json
 import os
 
 from utils import yellow, red, blue, green
@@ -6,6 +7,7 @@ from utils import yellow, red, blue, green
 class Agency(object):
   def __init__(self, name):
     self.name = name
+    self.queue = Queue()
 
   def open(self):
     os.system("clear")
@@ -32,3 +34,10 @@ class Agency(object):
         self.money()
       if option == "6":
         break
+
+  def load(self):
+    with open("logs/now") as f:
+      content = json.load(f.read())
+
+  def buy_ticket(self):
+
