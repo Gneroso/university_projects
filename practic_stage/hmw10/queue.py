@@ -30,3 +30,19 @@ class Queue(object):
   @property
   def size(self):
     return len(self.queue)
+
+  def load(self, data):
+    for item in data:
+      self.push(item)
+
+  def __contains__(self, item):
+    found = False
+    initial_size = self.size
+
+    while initial_size:
+      thing = self.pop()
+      if item == thing:
+        found = True
+      self.push(thing)
+
+    return found
